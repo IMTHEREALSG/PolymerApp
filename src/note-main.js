@@ -161,8 +161,8 @@ class QuickNotesApp extends PolymerElement {
         <div class="header">
           <h1 class="app-title">✍️ QuickNotes</h1>
           <div class="view-controls">
-            <button class$="view-btn [[_computeActive(viewMode, 'grid')]]" on-click="_setGridView" aria-label="Grid view">📋 Grid</button>
-            <button class$="view-btn [[_computeActive(viewMode, 'list')]]" on-click="_setListView" aria-label="List view">📄 List</button>
+            <button class$="view-btn [[Active(viewMode, 'grid')]]" on-click="_setGridView" aria-label="Grid view">📋 Grid</button>
+            <button class$="view-btn [[Active(viewMode, 'list')]]" on-click="_setListView" aria-label="List view">📄 List</button>
           </div>
         </div>
 
@@ -172,23 +172,23 @@ class QuickNotesApp extends PolymerElement {
             <span class="stat-label">Total Notes</span>
           </div>
           <div class="stat-card">
-            <span class="stat-number">[[_getNotesThisWeek(notes)]]</span>
+            <span class="stat-number">[[getNotesThisWeek(notes)]]</span>
             <span class="stat-label">This Week</span>
           </div>
         </div>
 
         <div class="content">
           <note-input 
-            on-note-saved="_noteSaved"
-            on-note-cancelled="_noteCancelled"
-            on-note-updated="_noteUpdated">
+            on-note-saved="noteSaved"
+            on-note-cancelled="noteCancelled"
+            on-note-updated="noteUpdated">
           </note-input>
 
           <notes-list 
             notes="[[notes]]"
             layout="[[viewMode]]"
-            on-note-deleted="_noteDeleted"
-            on-note-edited="_noteEdited">
+            on-note-deleted="noteDeleted"
+            on-note-edited="noteEdited">
           </notes-list>
         </div>
       </div>
@@ -197,32 +197,32 @@ class QuickNotesApp extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this._loadNotes();
+    this.loadNotes();
   }
 
-  _setGridView() {
+  setGridView() {
     this.viewMode = 'grid';
   }
 
-  _setListView() {
+  setListView() {
     this.viewMode = 'list';
   }
 
-  _computeActive(viewMode, type) {
+  Active(viewMode, type) {
     return viewMode === type ? 'active' : '';
   }
 
-  _noteSaved(e) {
+  noteSaved(e) {
     const newNote = e.detail;
     this.push('notes', newNote);
-    this._saveNotes();
+    this.saveNotes();
   }
 
-  _noteCancelled() {
+  noteCancelled() {
     console.log('Note input cancelled');
   }
 
-  _loadNotes() {
+  loadNotes() {
     const saved = localStorage.getItem('qnotes');
     if (saved) {
       try {
@@ -234,23 +234,23 @@ class QuickNotesApp extends PolymerElement {
     }
   }
 
-  _saveNotes() {
+  saveNotes() {
     localStorage.setItem('qnotes', JSON.stringify(this.notes));
   }
 
-  _noteDeleted(e) {
+  noteDeleted(e) {
     const id = e.detail.id;
     this.notes = this.notes.filter(n => n.id !== id);
-    this._saveNotes();
+    this.saveNotes();
   }
 
-  _noteUpdated(e) {
+  noteUpdated(e) {
     const updated = e.detail;
     this.notes = this.notes.map(note => note.id === updated.id ? updated : note);
-    this._saveNotes();
+    this.saveNotes();
   }
 
-  _noteEdited(e) {
+  noteEdited(e) {
     const note = e.detail.note;
     const input = this.shadowRoot.querySelector('note-input');
     if (input && input.startEdit) {
@@ -258,7 +258,7 @@ class QuickNotesApp extends PolymerElement {
     }
   }
 
-  _getNotesThisWeek(notes) {
+  getNotesThisWeek(notes) {
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
     return notes.filter(n => new Date(n.createdAt) > weekAgo).length;

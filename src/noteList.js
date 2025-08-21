@@ -184,7 +184,6 @@ class NotesList extends PolymerElement {
             background: #fecaca;
         }
 
-        /* No Notes State */
         .no-notes {
             grid-column: 1 / -1;
             text-align: center;
@@ -308,7 +307,7 @@ class NotesList extends PolymerElement {
         }
       </style>
 
-      <div class$="notes-list [[_computeLayoutClass(layout)]]">
+      <div class$="notes-list [[LayoutClass(layout)]]">
         <template is="dom-if" if="[[!notes.length]]">
           <div class="no-notes">
             <div>No notes yet</div>
@@ -325,10 +324,10 @@ class NotesList extends PolymerElement {
             </template>
             <p class="note-content">[[note.content]]</p>
             <div class="note-footer">
-              <span class="note-date">[[_formatDate(note.createdAt)]]</span>
+              <span class="note-date">[[formatDate(note.createdAt)]]</span>
               <div class="note-actions">
-                <button class="edit-btn" on-click="_onEdit">Edit</button>
-                <button class="delete-btn" on-click="_onDelete">Delete</button>
+                <button class="edit-btn" on-click="onEdit">Edit</button>
+                <button class="delete-btn" on-click="onDelete">Delete</button>
               </div>
             </div>
           </div>
@@ -337,11 +336,11 @@ class NotesList extends PolymerElement {
     `;
   }
 
-  _computeLayoutClass(layout) {
+  LayoutClass(layout) {
     return layout === 'list' ? 'list-layout' : 'grid-layout';
   }
 
-  _formatDate(date) {
+  formatDate(date) {
     return new Date(date).toLocaleDateString(undefined, {
       year: 'numeric',
       month: 'short',
@@ -349,7 +348,7 @@ class NotesList extends PolymerElement {
     });
   }
 
-  _onEdit(e) {
+  onEdit(e) {
     const note = e.model && e.model.note ? e.model.note : null;
     this.dispatchEvent(new CustomEvent('note-edited', {
       detail: { note },
@@ -358,7 +357,7 @@ class NotesList extends PolymerElement {
     }));
   }
 
-  _onDelete(e) {
+  onDelete(e) {
     const note = e.model && e.model.note ? e.model.note : null;
     if (note && note.id) {
       this.dispatchEvent(new CustomEvent('note-deleted', {

@@ -275,13 +275,13 @@ class NoteInput extends PolymerElement {
         }
       </style>
 
-      <div class$="note-input [[_computeClass(collapsed)]]">
+      <div class$="note-input [[Class(collapsed)]]">
         <input
           class="title-input"
           type="text"
-          placeholder$="[[_computeTitlePlaceholder(collapsed)]]"
+          placeholder$="[[TitlePlaceholder(collapsed)]]"
           value="{{title::input}}"
-          on-focus="_expandInput"
+          on-focus="expandInput"
         />
 
         <template is="dom-if" if="[[!collapsed]]">
@@ -289,12 +289,12 @@ class NoteInput extends PolymerElement {
             class="content-input"
             placeholder="Write your thoughts here..."
             value="{{content::input}}"
-            on-keydown="_handleKeydown"
+            on-keydown="handleKeydown"
           ></textarea>
 
           <div class="actions">
             <button class="cancel" on-click="cancelNote">Cancel</button>
-            <button class="save" disabled$="[[!_hasContent(title, content)]]" on-click="saveNote">
+            <button class="save" disabled$="[[!Content(title, content)]]" on-click="saveNote">
               [[buttonText]]
             </button>
           </div>
@@ -303,26 +303,26 @@ class NoteInput extends PolymerElement {
     `;
   }
 
-  _computeClass(collapsed) {
+  Class(collapsed) {
     return collapsed ? 'collapsed' : '';
   }
 
-  _computeTitlePlaceholder(collapsed) {
+  TitlePlaceholder(collapsed) {
     return collapsed ? 'Take a note...' : 'Note title (optional)';
   }
 
-  _hasContent(title, content) {
+  Content(title, content) {
     return (title && title.trim()) || (content && content.trim());
   }
 
-  _expandInput() {
+  expandInput() {
     this.collapsed = false;
   }
 
-  _handleKeydown(e) {
+  handleKeydown(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
-      if (this._hasContent(this.title, this.content)) {
+      if (this.Content(this.title, this.content)) {
         this.saveNote();
       }
     } else if (e.key === 'Escape') {
@@ -332,7 +332,7 @@ class NoteInput extends PolymerElement {
   }
 
   saveNote() {
-    if (!this._hasContent(this.title, this.content)) return;
+    if (!this.Content(this.title, this.content)) return;
 
     if (this.isEditing && this.editingNote) {
       const updatedNote = {
